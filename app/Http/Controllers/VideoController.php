@@ -10,4 +10,8 @@ class VideoController extends Controller
     public function get(Video $video){
         return $video;
     }
+
+    public function index(){
+        return Video::orderBy('created_at', 'desc')->get();
+    }
 }
