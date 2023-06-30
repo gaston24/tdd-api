@@ -33,16 +33,22 @@ class SePuedeObtenerUnListadoDeVideosTest extends TestCase
     }
 
     public function testElPayloadContieneLosVideosEnELSistema(){
+
+        $unId = 12345;
+        $unThumbnail = 'https://i.ytimg.com/vi/12345/mqdefault.jpg';
             
         // desactivar el manejo de excepciones
         // $this->withoutExceptionHandling();
 
         // crear el escenario
         // crear varios videos en el sistema (db)
-        $videos = factory(Video::class, 2)->create();
+        $video = factory(Video::class)->create([
+            'id' => $unId,
+            'thumbnail' => $unThumbnail
+        ]);
 
         // llamar a la api para pedir ese listado
-        $response = $this->getJson('/api/videos');
+        // $response = $this->getJson('/api/videos');
 
 
         // comprobar que el listado de videos que me devuelve la api es el mismo que cree en el sistema
@@ -51,9 +57,43 @@ class SePuedeObtenerUnListadoDeVideosTest extends TestCase
         //     ->assertJsonFragment($videos[0]->toArray())
         //     ->assertJsonFragment($videos[1]->toArray());
 
-        $response
-            ->assertOk()
-            ->assertJson($videos->toArray());
+        // $response = 
+            $this->getJson('/api/videos')
+            // ->assertOk()
+            ->assertExactJson(
+                [
+                    [
+                        'id' => $unId,
+                        'thumbnail' => $unThumbnail
+                    ]
+                ]
+            );
+
+        // factory(Video::class, 20)->create();
+        // $response = $this->getJson('/api/videos');
+
+
+        // dd($response->json());
+    }
+
+    public function testElPayloadContieneLosVideosEnELSistema2(){
+
+        $unId = 12345;
+        $unThumbnail = 'https://i.ytimg.com/vi/12345/mqdefault.jpg';
+            
+        $video = factory(Video::class)->create([
+            'id' => $unId,
+            'thumbnail' => $unThumbnail
+        ]);
+
+
+        $this->getJson('/api/videos')
+        ->assertExactJson(
+            [
+                new \App\Dtos\VideoPreview($video)
+            ]
+        );
+
     }
 
 
